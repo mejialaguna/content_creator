@@ -61,24 +61,24 @@ export function ContentEditor({ content, onContentChange, contentType }: Content
         </div>
       </div>
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'edit' | 'preview')}>
-        <div className='border-b px-4'>
-          <TabsList className='w-full justify-start rounded-none border-b-0 p-0'>
+        <div className='border-b'>
+          <TabsList className='w-full justify-start rounded-none border-b-0 py-0 px-5'>
             <TabsTrigger
               value='preview'
-              className='rounded-none border-b-2 border-transparent data-[state=active]:border-primary'
+              className='rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary'
             >
               Preview
             </TabsTrigger>
             <TabsTrigger
               value='edit'
-              className='rounded-none border-b-2 border-transparent data-[state=active]:border-primary'
+              className='rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary'
             >
               Edit
             </TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value='preview' className='p-4'>
-          <div className='prose dark:prose-invert max-w-none'>
+          <div className='prose dark:prose-invert max-w-none h-[55vh] overflow-y-auto no-scrollbar'>
             {content.split('\n').map((line, i) => (line ? <p key={i}>{line}</p> : <br key={i} />))}
           </div>
         </TabsContent>
