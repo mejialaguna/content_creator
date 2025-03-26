@@ -231,12 +231,12 @@ export default function GeneratorPage() {
                         <Button
                           type='submit'
                           disabled={isGenerating || isDisabled}
-                          className='w-full'
+                          className='w-full thinking-dots'
                         >
                           {isGenerating ? (
                             <>
                               <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                              Generating...
+                              Thinking <span /> <span /> <span />
                             </>
                           ) : (
                             'Generate Content'
