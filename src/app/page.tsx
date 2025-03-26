@@ -5,7 +5,6 @@ import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import { Pricing } from '@/components/pricing';
 import { Button } from '@/components/ui/button';
-import { Toaster } from '@/components/ui/sonner';
 
 export default function Home() {
   return (
@@ -41,7 +40,6 @@ export default function Home() {
         <Pricing />
       </main>
       <Footer />
-      <Toaster />
     </div>
   );
 }

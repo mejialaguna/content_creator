@@ -7,7 +7,7 @@ import {
   BarChart,
   Loader2,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ContentEditor } from '@/components/content-editor';
 import { Button } from '@/components/ui/button';
@@ -22,33 +22,57 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
   type ContentType,
   type ContentTone,
   contentTypes,
   contentTones,
   type OpenAIModel,
+  TabDataType,
+  InputLabelType,
 } from '@/lib/content-types';
 
 export default function GeneratorPage() {
   const [selectedType, setSelectedType] = useState<ContentType>('blog-post');
-  const [topic, setTopic] = useState('');
-  const [tone, setTone] = useState<ContentTone | ''>('');
-  const [model, setModel] = useState<OpenAIModel | ''>('');
-  const [keywords, setKeywords] = useState('');
-  const [generatedContent, setGeneratedContent] = useState('');
+  // const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
-  const isDisabled = !topic || !tone || !model;
+  const [tabData, setTabData] = useState<Partial<Record<ContentType, TabDataType>>>({});
+  const isDisabled = useMemo(
+    () =>
+      !tabData[selectedType]?.topic ||
+      !tabData[selectedType]?.tone ||
+      !tabData[selectedType]?.model,
+    [selectedType, tabData]
+  );
 
-  const icons = {
+  const icons = useMemo(() => ({
     FileText: <FileText className='h-5 w-5' />,
     ShoppingBag: <ShoppingBag className='h-5 w-5' />,
     MessageSquare: <MessageSquare className='h-5 w-5' />,
     BarChart: <BarChart className='h-5 w-5' />,
-  };
+  }), []);
 
-  const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleTabDataChange = useCallback(
+    (
+      valueOrEvent: React.ChangeEvent<HTMLInputElement> | ContentTone | OpenAIModel,
+      selectedType: ContentType,
+      type: InputLabelType
+    ) => {
+      const value = (valueOrEvent as React.ChangeEvent<HTMLInputElement>)?.target?.value ?? valueOrEvent;
+      setTabData((prev) => ({
+        ...prev,
+        [selectedType]: {
+          ...prev[selectedType],
+          [type]: type === 'keywords' ? [value] : value,
+        },
+      }));
+    },
+    []
+  );
+
+  const handleGenerate = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (isDisabled) {
@@ -58,21 +82,27 @@ export default function GeneratorPage() {
 
     setError('');
     setIsGenerating(true);
-    setGeneratedContent('');
+    setTabData((prev) => ({
+      ...prev,
+      [selectedType]: {
+        ...prev[selectedType],
+        generatedContent: '',
+      },
+    }));
 
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
         body: JSON.stringify({
           contentType: selectedType,
-          topic,
-          tone: tone || 'informative',
-          keywords: keywords
-            .split(',')
-            .map((k) => k.trim())
-            .filter(Boolean),
-          model: model || 'gpt-4',
+          topic: tabData[selectedType]?.topic,
+          tone: tabData[selectedType]?.tone || 'informative',
+          model: tabData[selectedType]?.model || 'gpt-4',
           shouldStream: true,
+          ...(tabData[selectedType]?.keywords &&
+            tabData[selectedType]?.keywords.length > 0 && {
+              keywords: tabData[selectedType]?.keywords,
+            }),
         }),
       });
 
@@ -91,7 +121,13 @@ export default function GeneratorPage() {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value);
-        setGeneratedContent((prev) => prev + chunk); // updates live
+        setTabData((prev) => ({
+          ...prev,
+          [selectedType]: {
+            ...prev[selectedType],
+            generatedContent: prev[selectedType]?.generatedContent + chunk,
+          },
+        })); // updates live
       }
     } catch (err) {
       setError('Failed to generate content. Please try again.');
@@ -100,7 +136,7 @@ export default function GeneratorPage() {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [isDisabled, selectedType, tabData]);
 
   return (
     <div className='space-y-8 px-2 md:px-0'>
@@ -115,7 +151,7 @@ export default function GeneratorPage() {
         <div className='space-y-6'>
           <Tabs
             defaultValue='blog-post'
-            onValueChange={(value) => setSelectedType(value as ContentType)}
+            onValueChange={(value: ContentType) => setSelectedType(value as ContentType)}
           >
             <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto]'>
               {Object.values(contentTypes).map((type) => (
@@ -150,8 +186,8 @@ export default function GeneratorPage() {
                           <Input
                             id='topic'
                             placeholder={`Enter the topic for your ${type.name.toLowerCase()}`}
-                            value={topic}
-                            onChange={(e) => setTopic(e.target.value)}
+                            value={tabData[selectedType]?.topic || ''}
+                            onChange={(e) => handleTabDataChange(e, selectedType, 'topic')}
                           />
                         </div>
 
@@ -162,9 +198,13 @@ export default function GeneratorPage() {
                               <span className='text-sm text-red-500'>*</span>
                             </Label>
                             <Select
-                              value={tone}
-                              onValueChange={(value) =>
-                                setTone(value as ContentTone)
+                              value={tabData[selectedType]?.tone || ''}
+                              onValueChange={(value: ContentTone) =>
+                                handleTabDataChange(
+                                  value as ContentTone,
+                                  selectedType,
+                                  'tone'
+                                )
                               }
                             >
                               <SelectTrigger>
@@ -188,9 +228,13 @@ export default function GeneratorPage() {
                               <span className='text-sm text-red-500'>*</span>
                             </Label>
                             <Select
-                              value={model}
-                              onValueChange={(value) =>
-                                setModel(value as OpenAIModel)
+                              value={tabData[selectedType]?.model || ''}
+                              onValueChange={(value: OpenAIModel) =>
+                                handleTabDataChange(
+                                  value as OpenAIModel,
+                                  selectedType,
+                                  'model'
+                                )
                               }
                             >
                               <SelectTrigger>
@@ -215,8 +259,8 @@ export default function GeneratorPage() {
                           <Input
                             id='keywords'
                             placeholder='Enter keywords separated by commas'
-                            value={keywords}
-                            onChange={(e) => setKeywords(e.target.value)}
+                            value={tabData[selectedType]?.keywords || ''}
+                            onChange={(e) => handleTabDataChange(e, selectedType, 'keywords')}
                           />
                           <p className='text-xs text-gray-500 dark:text-gray-400'>
                             Add keywords to include in your content, separated
@@ -231,12 +275,12 @@ export default function GeneratorPage() {
                         <Button
                           type='submit'
                           disabled={isGenerating || isDisabled}
-                          className='w-full thinking-dots'
+                          className='w-full'
                         >
                           {isGenerating ? (
                             <>
                               <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                              Thinking <span /> <span /> <span />
+                              Generating Content
                             </>
                           ) : (
                             'Generate Content'
@@ -253,11 +297,18 @@ export default function GeneratorPage() {
 
         <div className='space-y-4'>
           <h2 className='text-xl font-bold'>Content Preview</h2>
-          {generatedContent ? (
+          {tabData[selectedType]?.generatedContent ? (
             <ContentEditor
-              content={generatedContent}
-              onContentChange={setGeneratedContent}
+              content={tabData[selectedType]?.generatedContent}
+              onContentChange={(e) => setTabData((prev) => ({
+                ...prev,
+                [selectedType]: {
+                  ...prev[selectedType],
+                  generatedContent: e,
+                },
+              }))}
               contentType={selectedType}
+              isGenerating={isGenerating}
             />
           ) : (
             <div className='flex h-[400px] items-center justify-center rounded-lg border border-dashed p-8 text-center'>

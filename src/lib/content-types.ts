@@ -25,6 +25,14 @@ export interface GenerateContentProps {
   client: OpenAI;
 }
 
+export interface TabDataType extends Omit<GenerateContentProps, 'client' | 'contentType'> {
+  model: OpenAIModel | '';
+  generatedContent: string;
+  error: string;
+};
+
+export type InputLabelType = 'topic' | 'tone' | 'model' | 'keywords';
+
 export const contentTypes: Record<ContentType, ContentTypeConfig> = {
   'blog-post': {
     id: 'blog-post',
