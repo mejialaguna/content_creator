@@ -1,7 +1,11 @@
+import type OpenAI from 'openai';
+
 /* eslint-disable max-len */
 export type ContentType = 'blog-post' | 'product-description' | 'social-media' | 'ad-copy'
 
 export type ContentTone = 'formal' | 'casual' | 'funny' | 'persuasive' | 'informative'
+
+export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4'
 
 export interface ContentTypeConfig {
   id: ContentType
@@ -11,6 +15,14 @@ export interface ContentTypeConfig {
   promptTemplate: string
   defaultTone: ContentTone
   maxLength: number
+}
+
+export interface GenerateContentProps {
+  contentType: ContentType;
+  topic: string;
+  tone: ContentTone;
+  keywords?: string[];
+  client: OpenAI;
 }
 
 export const contentTypes: Record<ContentType, ContentTypeConfig> = {

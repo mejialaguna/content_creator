@@ -27,17 +27,19 @@ import {
   type ContentTone,
   contentTypes,
   contentTones,
+  type OpenAIModel,
 } from '@/lib/content-types';
-import { generateContent } from '@/lib/openaiAction';
 
 export default function GeneratorPage() {
   const [selectedType, setSelectedType] = useState<ContentType>('blog-post');
   const [topic, setTopic] = useState('');
-  const [tone, setTone] = useState<ContentTone>('informative');
+  const [tone, setTone] = useState<ContentTone | ''>('');
+  const [model, setModel] = useState<OpenAIModel | ''>('');
   const [keywords, setKeywords] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
+  const isDisabled = !topic || !tone || !model;
 
   const icons = {
     FileText: <FileText className='h-5 w-5' />,
@@ -46,29 +48,51 @@ export default function GeneratorPage() {
     BarChart: <BarChart className='h-5 w-5' />,
   };
 
-  const handleGenerate = async () => {
-    if (!topic) {
-      setError('Please enter a topic');
+  const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (isDisabled) {
+      setError('Please fill all required fields');
       return;
     }
 
     setError('');
     setIsGenerating(true);
+    setGeneratedContent('');
 
     try {
-      const content = await generateContent({
-        contentType: selectedType,
-        topic,
-        tone,
-        keywords: keywords
-          .split(',')
-          .map((k) => k.trim())
-          .filter(Boolean),
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        body: JSON.stringify({
+          contentType: selectedType,
+          topic,
+          tone: tone || 'informative',
+          keywords: keywords
+            .split(',')
+            .map((k) => k.trim())
+            .filter(Boolean),
+          model: model || 'gpt-4',
+          shouldStream: true,
+        }),
       });
 
-      const chatCompletion = content.choices[0].message.content ;
+      if (!res.ok) {
+        throw new Error('Failed to fetch content');
+      }
 
-      setGeneratedContent(chatCompletion|| '');
+      if (!res.body) {
+        throw new Error('No response body');
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        setGeneratedContent((prev) => prev + chunk); // updates live
+      }
     } catch (err) {
       setError('Failed to generate content. Please try again.');
       // eslint-disable-next-line no-console
@@ -79,8 +103,8 @@ export default function GeneratorPage() {
   };
 
   return (
-    <div className='space-y-8'>
-      <div>
+    <div className='space-y-8 px-2 md:px-0'>
+      <div className='justify-items-center md:justify-items-start'>
         <h1 className='text-3xl font-bold tracking-tight'>Content Generator</h1>
         <p className='text-gray-500 dark:text-gray-400'>
           Generate high-quality content with AI.
@@ -93,7 +117,7 @@ export default function GeneratorPage() {
             defaultValue='blog-post'
             onValueChange={(value) => setSelectedType(value as ContentType)}
           >
-            <TabsList className='grid grid-cols-4'>
+            <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto]'>
               {Object.values(contentTypes).map((type) => (
                 <TabsTrigger
                   key={type.id}
@@ -105,7 +129,7 @@ export default function GeneratorPage() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <form action={handleGenerate}>
+            <form onSubmit={handleGenerate}>
               {Object.values(contentTypes).map((type) => (
                 <TabsContent key={type.id} value={type.id}>
                   <Card>
@@ -119,7 +143,10 @@ export default function GeneratorPage() {
                         </div>
 
                         <div className='space-y-2'>
-                          <Label htmlFor='topic'>Topic or Subject</Label>
+                          <Label htmlFor='topic'>
+                            Topic or Subject{' '}
+                            <span className='text-sm text-red-500'>*</span>
+                          </Label>
                           <Input
                             id='topic'
                             placeholder={`Enter the topic for your ${type.name.toLowerCase()}`}
@@ -128,27 +155,59 @@ export default function GeneratorPage() {
                           />
                         </div>
 
-                        <div className='space-y-2'>
-                          <Label htmlFor='tone'>Tone</Label>
-                          <Select
-                            value={tone}
-                            onValueChange={(value) =>
-                              setTone(value as ContentTone)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder='Select a tone' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Object.entries(contentTones).map(
-                                ([id, { name, description }]) => (
-                                  <SelectItem key={id} value={id}>
-                                    {name} - {description}
+                        <div className='flex flex-col md:flex-row justify-between gap-4'>
+                          <div className='space-y-2 flex-1'>
+                            <Label htmlFor='tone'>
+                              Tone{' '}
+                              <span className='text-sm text-red-500'>*</span>
+                            </Label>
+                            <Select
+                              value={tone}
+                              onValueChange={(value) =>
+                                setTone(value as ContentTone)
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder='Select a tone' />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Object.entries(contentTones).map(
+                                  ([id, { name, description }]) => (
+                                    <SelectItem key={id} value={id}>
+                                      {name} - {description}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className='space-y-2'>
+                            <Label htmlFor='model'>
+                              Model{' '}
+                              <span className='text-sm text-red-500'>*</span>
+                            </Label>
+                            <Select
+                              value={model}
+                              onValueChange={(value) =>
+                                setModel(value as OpenAIModel)
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder='Select a Model' />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {['gpt-3.5-turbo', 'gpt-4'].map((name, id) => (
+                                  <SelectItem
+                                    key={`${name}-${id}`}
+                                    value={name}
+                                  >
+                                    {name}
                                   </SelectItem>
-                                )
-                              )}
-                            </SelectContent>
-                          </Select>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
 
                         <div className='space-y-2'>
@@ -171,7 +230,7 @@ export default function GeneratorPage() {
 
                         <Button
                           type='submit'
-                          disabled={isGenerating || !topic}
+                          disabled={isGenerating || isDisabled}
                           className='w-full'
                         >
                           {isGenerating ? (

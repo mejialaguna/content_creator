@@ -1,5 +1,3 @@
-'use server';
-
 /* eslint-disable max-len */
 import OpenAI from 'openai';
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -8,53 +6,67 @@ import {
   type ContentTone,
   type ContentType,
   contentTypes,
+  type OpenAIModel,
 } from './content-types';
 
-export async function generateContent({
-  contentType,
-  topic,
-  tone,
-  keywords = [],
-}: {
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+
+interface GenerateOptions {
   contentType: ContentType;
   topic: string;
   tone: ContentTone;
   keywords?: string[];
-}) {
-  const typeConfig = contentTypes[contentType];
+  model: OpenAIModel;
+  shouldStream?: boolean;
+}
 
-  // Create a prompt based on the template
+export async function* generateContent({
+  contentType,
+  topic,
+  tone,
+  keywords = [],
+  model,
+  shouldStream = false,
+}: GenerateOptions) {
+  const typeConfig = contentTypes[contentType];
   let prompt = typeConfig.promptTemplate
     .replace('{topic}', topic)
     .replace('{tone}', tone);
 
-  // Add keywords if provided
   if (keywords.length > 0) {
     prompt += ` Include the following keywords: ${keywords.join(', ')}.`;
   }
 
-  // Add system prompt based on content type and tone
   const systemPrompt = getSystemPrompt(contentType, tone);
 
-  try {
-    const completion = await client.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
+  const options = {
+    model,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: prompt },
+    ] as ChatCompletionMessageParam[],
+  };
 
-    return completion;
+  try {
+    // Handle stream if requested
+    if (shouldStream) {
+      const stream = await client.chat.completions.create({
+        ...options,
+        stream: true,
+      });
+
+      for await (const chunk of stream) {
+        const content = chunk?.choices[0]?.delta?.content || '';
+        if (content) {
+          yield content; // Stream each chunk
+        }
+      }
+    } else {
+      const completion = await client.chat.completions.create(options);
+      const fullContent = completion?.choices[0]?.message?.content || '';
+      yield fullContent;
+    }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error generating content:', error);
     throw new Error('Failed to generate content. Please try again.');
   }
 }
