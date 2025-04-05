@@ -67,7 +67,7 @@ export function ContentEditor({ content, onContentChange, contentType, isGenerat
           <div className='prose dark:prose-invert max-w-none h-[55vh] overflow-y-auto no-scrollbar thinking-dots'>
             {isGenerating && 
               <div className='thinking-dots mb-6'>
-                Thinking
+                Writting
                 <span className='ml-1'/>
                 <span />
                 <span />

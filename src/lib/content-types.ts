@@ -5,7 +5,7 @@ export type ContentType = 'blog-post' | 'product-description' | 'social-media' |
 
 export type ContentTone = 'formal' | 'casual' | 'funny' | 'persuasive' | 'informative'
 
-export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4'
+export type InputLabelType = 'topic' | 'tone' | 'model' | 'keywords';
 
 export interface ContentTypeConfig {
   id: ContentType
@@ -17,6 +17,7 @@ export interface ContentTypeConfig {
   maxLength: number
 }
 
+export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4'
 export interface GenerateContentProps {
   contentType: ContentType;
   topic: string;
@@ -25,13 +26,58 @@ export interface GenerateContentProps {
   client: OpenAI;
 }
 
+export interface GeneratedContentData extends Omit<GenerateContentProps, 'client'> {
+  userId: string;
+  generatedContent: string;
+  model: OpenAIModel;
+}
+
 export interface TabDataType extends Omit<GenerateContentProps, 'client' | 'contentType'> {
   model: OpenAIModel | '';
   generatedContent: string;
   error: string;
 };
 
-export type InputLabelType = 'topic' | 'tone' | 'model' | 'keywords';
+export interface ResponseStatus {
+  ok: boolean;
+  message?: string;
+}
+
+export interface UserStats {
+  id: string;
+  updatedAt: Date;
+  userId: string;
+  totalWords: number;
+  totalContents: number;
+  blogPostCount: number;
+  productDescriptionCount: number;
+  socialMediaCount: number;
+  adCopyCount: number;
+}
+
+export interface UserStatsResponse extends ResponseStatus {
+  userStats: UserStats | Record<string, never>;
+}
+
+export interface UserGeneratedContent {
+  id: string;
+  userId: string;
+  contentType: string;
+  topic: string;
+  tone: string;
+  keywords?: string[];
+  generatedContent: string;
+  createdAt: Date;
+}
+
+export interface UserGeneratedContentResponse extends ResponseStatus {
+  userContent: UserGeneratedContent[];
+}
+
+export interface UserStatsAndContentResponse extends ResponseStatus {
+  userStats: UserStats | Record<string, never>; 
+  userContent: UserGeneratedContent[];
+}
 
 export const contentTypes: Record<ContentType, ContentTypeConfig> = {
   'blog-post': {

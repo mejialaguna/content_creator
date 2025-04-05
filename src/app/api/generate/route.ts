@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { saveContent } from '@/actions/saveGeneratedContent';
+import { streamAndCollectContent } from '@/helpers/streamAndCollect';
 import { generateContent } from '@/lib/openaiAction';
 
 import type { ContentTone, ContentType, OpenAIModel } from '@/lib/content-types';
@@ -8,10 +10,19 @@ import type { ContentTone, ContentType, OpenAIModel } from '@/lib/content-types'
 
 export async function POST(req: NextRequest) {
   try {
-    const { contentType, topic, tone, keywords, model, shouldStream } = await req.json();
+    const { contentType, topic, tone, keywords, model, shouldStream, id } = await req.json();
+    const missingFields = [];
 
-    if (!contentType || !topic || !tone) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!contentType) missingFields.push('contentType');
+    if (!topic) missingFields.push('topic');
+    if (!tone) missingFields.push('tone');
+
+    if (missingFields.length > 0) {
+      return NextResponse.json({ error: `Missing required fields: ${missingFields.join(', ')}` }, { status: 400 });
+    }
+
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json({ error: 'Missing or invalid user id' }, { status: 400 });
     }
 
     const encoder = new TextEncoder();
@@ -27,10 +38,20 @@ export async function POST(req: NextRequest) {
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of content) {
-            controller.enqueue(encoder.encode(chunk)); // Send each chunk as it's ready
-          }
-          controller.close();
+          const fullContent = await streamAndCollectContent(content, controller, encoder);
+
+          saveContent({
+            userId: id,
+            contentType,
+            topic,
+            tone,
+            model,
+            keywords,
+            generatedContent: fullContent,
+          }).catch((err) => {
+            console.error('Background save failed:', err);
+          });
+
         } catch (error) {
           console.error('Streaming error:', error);
           controller.error(error);

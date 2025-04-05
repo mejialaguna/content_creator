@@ -67,7 +67,7 @@ export async function* generateContent({
       yield fullContent;
     }
   } catch (error) {
-    throw new Error('Failed to generate content. Please try again.');
+    throw error instanceof Error ? error : new Error('Failed to generate content. Please try again.');
   }
 }
 

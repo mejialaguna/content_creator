@@ -67,7 +67,7 @@ export function DashboardNav() {
           ))}
         </nav>
         <div className='ml-auto flex items-center gap-2 md:ml-4'>
-          <Link href='/dashboard/generator'>
+          <Link href='/dashboard/generator/blog-post'>
             <Button size='sm' className='hidden md:flex'>
               <Plus className='mr-2 h-4 w-4' />
               New Content
@@ -119,7 +119,7 @@ export function DashboardNav() {
                   {route.label}
                 </Link>
               ))}
-              <Link href='/dashboard/generator' onClick={() => setIsOpen(false)}>
+              <Link href='/dashboard/generator/blog-post' onClick={() => setIsOpen(false)}>
                 <Button className='w-full'>
                   <Plus className='mr-2 h-4 w-4' />
                   New Content

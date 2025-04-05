@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum ContentType {
+  blogPost           @map("blog-post")
+  productDescription @map("product-description")
+  socialMedia        @map("social-media")
+  adCopy             @map("ad-copy")
+}
+
+enum ContentTone {
+  formal
+  casual
+  persuasive
+  informative
+  funny
+}
+
+enum OpenAIModelModelType {
+  gpt_3_5_turbo @map("gpt-3.5-turbo")
+  gpt_4         @map("gpt-4")
+}
+
+enum Tier {
+  free
+  pro
+  business
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  password      String
+  role          Role      @default(user)
+  tierType      Tier
+
+  ContentData ContentData[]
+  UserStats   UserStats?
+}
+
+model UserStats {
+  id                      String   @id @default(uuid())
+  totalWords              Int      @default(0)
+  totalContents           Int      @default(0)
+  blogPostCount           Int      @default(0)
+  productDescriptionCount Int      @default(0)
+  socialMediaCount        Int      @default(0)
+  adCopyCount             Int      @default(0)
+  updatedAt               DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model ContentData {
+  id               String               @id @default(uuid())
+  contentType      ContentType
+  topic            String
+  tone             ContentTone
+  model            OpenAIModelModelType
+  keywords         String[]             @default([])
+  generatedContent String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ** relationship with between this table and user table
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // This index improves performance when searching or filtering by userId — for example, when finding all contents created by a particular user.
+  @@index([userId])
+}
