@@ -5,6 +5,30 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+const templates = [
+  {
+    id: 1,
+    title: 'Blog Post',
+    description: 'Create engaging blog posts on any topic for your website.',
+    icon: <FileText className="mr-2 h-5 w-5" />,
+    href: '/dashboard/generator/blog-post',
+  },
+  {
+    id: 3,
+    title: 'Product Description',
+    description: 'Generate compelling product descriptions',
+    icon: <ShoppingBag className="mr-2 h-5 w-5" />,
+    href: '/dashboard/generator/product-description',
+  },
+  {
+    id: 2,
+    title: 'Social Media',
+    description: 'Craft attention-grabbing social media posts',
+    icon: <MessageSquare className="mr-2 h-5 w-5" />,
+    href: '/dashboard/generator/social-media',
+  },
+];
+
 export default function DashboardPage() {
   // Mock data for recent content
   const recentContent = [
@@ -141,51 +165,24 @@ export default function DashboardPage() {
         </TabsContent>
         <TabsContent value="templates" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <FileText className="mr-2 h-5 w-5" />
-                  Blog Post
-                </CardTitle>
-                <CardDescription>Create engaging blog posts on any topic</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button className="w-full">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create
-                </Button>
-              </CardFooter>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Product Description
-                </CardTitle>
-                <CardDescription>Generate compelling product descriptions</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button className="w-full">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create
-                </Button>
-              </CardFooter>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MessageSquare className="mr-2 h-5 w-5" />
-                  Social Media
-                </CardTitle>
-                <CardDescription>Craft attention-grabbing social media posts</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button className="w-full">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create
-                </Button>
-              </CardFooter>
-            </Card>
+            {templates.map((template) => (
+              <Card key={template.id}>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    {template.icon}
+                    {template.title}
+                  </CardTitle>
+                  <CardDescription>{template.description}</CardDescription>
+                </CardHeader>
+                <CardFooter>
+                  <Link href={template.href}
+                   className="flex bg-black w-full text-white justify-center items-center rounded py-1.5">
+                    <Plus className="mr-2 h-4 w-4 text-white" />
+                    Create
+                  </Link>
+                </CardFooter>
+              </Card>
+            ))}
           </div>
         </TabsContent>
       </Tabs>

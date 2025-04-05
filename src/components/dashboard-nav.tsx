@@ -18,6 +18,8 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export function DashboardNav() {
   const pathname = usePathname();
+  const segments = pathname.split('/').filter(Boolean);
+  const templateId = segments[segments.length - 1];
   const [isOpen, setIsOpen] = useState(false);
 
   const routes = [
@@ -27,9 +29,9 @@ export function DashboardNav() {
       active: pathname === '/dashboard',
     },
     {
-      href: '/dashboard/generator',
+      href: '/dashboard/generator/blog-post',
       label: 'Content Generator',
-      active: pathname === '/dashboard/generator',
+      active: pathname === `/dashboard/generator/${templateId}`,
     },
     {
       href: '/dashboard/history',
