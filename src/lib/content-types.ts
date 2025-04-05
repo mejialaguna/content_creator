@@ -70,6 +70,20 @@ export interface UserGeneratedContent {
   createdAt: Date;
 }
 
+export interface UserGeneratedContentById extends ResponseStatus{
+ content : { 
+    id: string;
+    userId: string;
+    contentType: string;
+    topic: string;
+    tone: string;
+    keywords?: string[];
+    generatedContent: string;
+    createdAt: Date;
+    model: OpenAIModel;
+  } | null;
+}
+
 export interface UserGeneratedContentResponse extends ResponseStatus {
   userContent: UserGeneratedContent[];
 }

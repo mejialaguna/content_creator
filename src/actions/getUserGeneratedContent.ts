@@ -1,8 +1,11 @@
 'use server';
 
+import { OpenAIModelModelType } from '@prisma/client';
+
 import prisma from '@/lib/prisma';
 
 import type {
+  UserGeneratedContentById,
   UserGeneratedContentResponse,
   UserStatsAndContentResponse,
   UserStatsResponse,
@@ -13,6 +16,11 @@ const ContentTypeMap = {
   productDescription: 'product-description',
   socialMedia: 'social-media',
   adCopy: 'ad-copy',
+} as const;
+
+const ModelMap = {
+  [OpenAIModelModelType.gpt_3_5_turbo]: 'gpt-3.5-turbo',
+  [OpenAIModelModelType.gpt_4]: 'gpt-4',
 } as const;
 
 export async function getUserStats(userId: string): Promise<UserStatsResponse> {
@@ -83,8 +91,8 @@ export async function getUserGeneratedContent(
       ok: true,
       userContent: userContent.map((itmes) => ({
         ...itmes,
-        contentType: ContentTypeMap[itmes.contentType]
-      }))
+        contentType: ContentTypeMap[itmes.contentType],
+      })),
     };
   } catch (error) {
     return {
@@ -95,7 +103,9 @@ export async function getUserGeneratedContent(
   }
 }
 
-export async function getUserStatsAndContent(userId: string): Promise<UserStatsAndContentResponse> {
+export async function getUserStatsAndContent(
+  userId: string
+): Promise<UserStatsAndContentResponse> {
   if (!userId) {
     return {
       ok: false,
@@ -134,3 +144,54 @@ export async function getUserStatsAndContent(userId: string): Promise<UserStatsA
     };
   }
 }
+
+export const getUserGeneratedContentById = async (
+  userId: string,
+  contentId: string
+): Promise<UserGeneratedContentById> => {
+  if (
+    !userId ||
+    typeof userId !== 'string' ||
+    !contentId ||
+    typeof contentId !== 'string'
+  ) {
+    return {
+      ok: false,
+      message: 'Invalid user ID or content ID',
+      content: null,
+    };
+  }
+
+  try {
+    const content = await prisma.contentData.findUnique({
+      where: {
+        id: contentId,
+        userId,
+      },
+    });
+
+    if (!content) {
+      return {
+        ok: false,
+        message: 'No content found',
+        content: null,
+      };
+    }
+
+    return {
+      ok: true,
+      message: 'Content found',
+      content: {
+        ...content,
+        contentType: ContentTypeMap[content.contentType],
+        model: ModelMap[content.model],
+      },
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: `Failed to retrieve user stats and content: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      content: null,
+    };
+  }
+};

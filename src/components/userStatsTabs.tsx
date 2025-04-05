@@ -3,7 +3,6 @@ import Link from 'next/link';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { Button } from './ui/button';
 import {
   Card,
   CardHeader,
@@ -46,7 +45,12 @@ export const UserStatsTabs = ({
   const wordCount = (content: string) => {
     return content.trim().split(/\s+/).filter(Boolean).length;
   };
-  // console.log(userContent)
+
+  const recentContent = userContent.filter((item) => {
+    const createdAtDate = new Date(item.createdAt);
+    return createdAtDate >= new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+  });
+
   return (
     <Tabs defaultValue='recent' className='space-y-4'>
       <TabsList>
@@ -54,29 +58,39 @@ export const UserStatsTabs = ({
         <TabsTrigger value='templates'>Templates</TabsTrigger>
       </TabsList>
       <TabsContent value='recent' className='space-y-4'>
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-          {userContent.map((content) => (
-            <Card key={content.id} className='flex flex-col'>
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-lg leading-5'>{content.topic}</CardTitle>
-                <CardDescription>
-                  {content.contentType} •{' '}
-                  {content.createdAt.toLocaleDateString()}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className='text-sm text-gray-500 dark:text-gray-400'>
-                  {wordCount(content.generatedContent)} words
-                </p>
-              </CardContent>
-              <CardFooter className='flex justify-between mx-0 mt-auto mb-0'>
-                <Button variant='outline' size='sm'>
-                  Edit
-                </Button>
-                <Button size='sm'>View</Button>
-              </CardFooter>
-            </Card>
-          ))}
+        <div
+          className={`${!recentContent.length ? 'flex flex-col gap-3' : 'grid gap-4 md:grid-cols-2 lg:grid-cols-3'} `}
+        >
+          {!recentContent.length ? (
+            <span> theres no recent searches...</span>
+          ) : (
+            recentContent.map((content) => (
+              <Card key={content.id} className='flex flex-col'>
+                <CardHeader className='pb-2'>
+                  <CardTitle className='text-lg leading-5'>
+                    {content.topic}
+                  </CardTitle>
+                  <CardDescription>
+                    {content.contentType} •{' '}
+                    {content.createdAt.toLocaleDateString()}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className='text-sm text-gray-500 dark:text-gray-400'>
+                    {wordCount(content.generatedContent)} words
+                  </p>
+                </CardContent>
+                <CardFooter className='flex justify-between mx-0 mt-auto mb-0'>
+                  <Link
+                    href={`/dashboard/generator/${content.contentType}/?contentId=${content.id}`}
+                    className='text-white bg-black rounded-lg px-3 py-1'
+                  >
+                    View
+                  </Link>
+                </CardFooter>
+              </Card>
+            ))
+          )}
           <Card className='flex flex-col items-center justify-center p-8'>
             <Link
               href='/dashboard/generator/blog-post'
