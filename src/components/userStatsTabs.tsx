@@ -1,6 +1,7 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs';
 import { FileText, ShoppingBag, MessageSquare, Plus } from 'lucide-react';
 import Link from 'next/link';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Button } from './ui/button';
 import {
@@ -95,7 +96,7 @@ export const UserStatsTabs = ({
       <TabsContent value='templates' className='space-y-4'>
         <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
           {templates.map((template) => (
-            <Card key={template.id} className='flex'>
+            <Card key={template.id} className='flex flex-col'>
               <CardHeader>
                 <CardTitle className='flex items-center'>
                   {template.icon}
