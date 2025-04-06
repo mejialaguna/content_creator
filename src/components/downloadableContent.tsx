@@ -21,9 +21,9 @@ export function DownloadableContent({
 }: DownloadablecontentProps) {
   return (
     <div
-      className={`hidden md:flex items-center justify-between ${shouldShow ? 'border-b p-4' : ''} `}
+      className={`hidden md:flex items-center justify-between lg:justify-center ${shouldShow ? 'border-b p-4' : ''} `}
     >
-      {shouldShow && <h3 className='font-medium'>Content Editor</h3>}
+      {shouldShow && <h3 className='font-medium lg:hidden'>Content Editor</h3>}
       <div className='flex space-x-2'>
         <Button variant='outline' size='sm' onClick={() => handleCopy(content)}>
           <Copy className='mr-2 h-4 w-4' />
