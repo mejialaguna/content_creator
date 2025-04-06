@@ -43,10 +43,10 @@ interface HistoryListProps {
 }
 
 const typeIcons = {
-  'blog-post': <FileText className="h-4 w-4" />,
-  'product-description': <ShoppingBag className="h-4 w-4" />,
-  'social-media': <MessageSquare className="h-4 w-4" />,
-  'ad-copy': <BarChart className="h-4 w-4" />,
+  'blog-post': <FileText className='h-4 w-4' />,
+  'product-description': <ShoppingBag className='h-4 w-4' />,
+  'social-media': <MessageSquare className='h-4 w-4' />,
+  'ad-copy': <BarChart className='h-4 w-4' />,
 };
 
 const typeNames = {
@@ -86,13 +86,13 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
 
   return (
     <>
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+      <div className='flex items-center gap-4'>
+        <div className='relative flex-1'>
+          <Search className='absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400' />
           <Input
-            type="search"
-            placeholder="Search by Topic..."
-            className="pl-8"
+            type='search'
+            placeholder='Search by Topic...'
+            className='pl-8'
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
           />
@@ -100,8 +100,8 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
         <Select
           onValueChange={(value: ContentType) => setSelectedFilterValue(value)}
         >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select Content type" />
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Select Content type' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -116,41 +116,41 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
         </Select>
       </div>
       {!ok ? (
-        <div className="justify-self-center mt-11">
+        <div className='justify-self-center mt-11'>
           Theres is not content saved yet.
         </div>
       ) : (
         <>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             {filterContentHistory.map((item) => (
               <Card key={item.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
+                <CardHeader className='pb-2'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center space-x-2'>
                       {typeIcons[item.contentType as keyof typeof typeIcons]}
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      <span className='text-sm font-medium text-gray-500 dark:text-gray-400'>
                         {typeNames[item.contentType as keyof typeof typeNames]}
                       </span>
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className='text-sm text-gray-500 dark:text-gray-400'>
                       {new Date(item.createdAt).toDateString()}
                     </span>
                   </div>
-                  <CardTitle className="text-xl">{item.topic}</CardTitle>
+                  <CardTitle className='text-xl'>{item.topic}</CardTitle>
                   <CardDescription>
                     {wordCount(item.generatedContent)} words
                   </CardDescription>
                 </CardHeader>
-                <CardFooter className="flex justify-between pt-2 flex-wrap md:flex-nowrap">
+                <CardFooter className='flex justify-between pt-2 flex-wrap md:flex-nowrap'>
                   <DownloadableContent
                     content={item.generatedContent}
                     contentType={item.contentType as ContentType}
                     shouldShow={false}
                   />
-                  <div className="space-x-2">
+                  <div className='space-x-2'>
                     <Link
                       href={`/dashboard/generator/${item.contentType}/?contentId=${item.id}`}
-                      className="bg-black text-white py-1.5 px-2.5 rounded-md"
+                      className='bg-black text-white py-1.5 px-2.5 rounded-md'
                     >
                       View
                     </Link>
@@ -160,14 +160,14 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
             ))}
           </div>
 
-          <div className="flex items-center justify-between">
-            <Button variant="outline" disabled>
+          <div className='flex items-center justify-between'>
+            <Button variant='outline' disabled>
               Previous
             </Button>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
               Page 1 of 1
             </div>
-            <Button variant="outline" disabled>
+            <Button variant='outline' disabled>
               Next
             </Button>
           </div>

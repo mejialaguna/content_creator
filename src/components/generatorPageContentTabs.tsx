@@ -183,7 +183,7 @@ export default function GeneratorPageContentTabs({
   );
 
   return (
-    <div className='space-y-8 px-2 md:px-0'>
+    <div className='space-y-8 px-2 md:px-5'>
       <div className='justify-items-center md:justify-items-start'>
         <h1 className='text-3xl font-bold tracking-tight'>Content Generator</h1>
         <p className='text-gray-500 dark:text-gray-400'>
@@ -191,14 +191,14 @@ export default function GeneratorPageContentTabs({
         </p>
       </div>
 
-      <div className='grid gap-8 md:grid-cols-2'>
+      <div className='grid gap-8 lg:grid-cols-2'>
         <div className='space-y-6'>
           <Tabs
             defaultValue='blog-post'
             value={selectedType}
             onValueChange={onChange}
           >
-            <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto]'>
+            <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto] lg:flex'>
               {Object.values(contentTypes).map((type) => (
                 <TabsTrigger
                   key={type.id}
@@ -363,7 +363,7 @@ export default function GeneratorPageContentTabs({
         </div>
 
         <div className='space-y-4'>
-          <h2 className='text-xl font-bold'>Content Preview</h2>
+          <h2 className='text-xl font-bold text-center lg:text-right'>Content Preview</h2>
           {tabData[selectedType]?.generatedContent || shouldShowSavedContent ? (
             <ContentEditor
               content={

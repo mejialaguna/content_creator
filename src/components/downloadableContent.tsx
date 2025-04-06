@@ -23,34 +23,34 @@ export function DownloadableContent({
     <div
       className={`hidden md:flex items-center justify-between ${shouldShow ? 'border-b p-4' : ''} `}
     >
-      {shouldShow && <h3 className="font-medium">Content Editor</h3>}
-      <div className="flex space-x-2">
-        <Button variant="outline" size="sm" onClick={() => handleCopy(content)}>
-          <Copy className="mr-2 h-4 w-4" />
+      {shouldShow && <h3 className='font-medium'>Content Editor</h3>}
+      <div className='flex space-x-2'>
+        <Button variant='outline' size='sm' onClick={() => handleCopy(content)}>
+          <Copy className='mr-2 h-4 w-4' />
           Copy
         </Button>
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => handleContentExport('pdf', contentType, content)}
         >
-          <FileOutput className="mr-2 h-4 w-4" />
+          <FileOutput className='mr-2 h-4 w-4' />
           PDF
         </Button>
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => handleContentExport('markdown', contentType, content)}
         >
-          <FileCode className="mr-2 h-4 w-4" />
+          <FileCode className='mr-2 h-4 w-4' />
           Markdown
         </Button>
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => handleContentExport('docx', contentType, content)}
         >
-          <FileText className="mr-2 h-4 w-4" />
+          <FileText className='mr-2 h-4 w-4' />
           Word
         </Button>
       </div>
