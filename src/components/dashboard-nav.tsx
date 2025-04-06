@@ -47,11 +47,11 @@ export function DashboardNav() {
 
   return (
     <header className='w-full border-b bg-background'>
-      <div className='container flex h-16 items-center px-4 md:px-6 justify-self-center'>
-        <Link href='/' className='flex items-center gap-2'>
+      <div className='container flex h-16 items-center px-4 md:px-6 justify-self-center md:justify-between'>
+        <Link href='/' className='flex md:hidden lg:flex items-center gap-2'>
           <span className='text-xl font-bold'>AI Content Generator</span>
         </Link>
-        <nav className='ml-auto hidden gap-6 md:flex'>
+        <nav className='lg:ml-auto hidden gap-6 md:flex'>
           {routes.map((route) => (
             <Link
               key={route.href}

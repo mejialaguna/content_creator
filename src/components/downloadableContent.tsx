@@ -21,7 +21,7 @@ export function DownloadableContent({
 }: DownloadablecontentProps) {
   return (
     <div
-      className={`flex items-center justify-between ${shouldShow ? 'border-b p-4' : ''} `}
+      className={`hidden md:flex items-center justify-between ${shouldShow ? 'border-b p-4' : ''} `}
     >
       {shouldShow && <h3 className="font-medium">Content Editor</h3>}
       <div className="flex space-x-2">

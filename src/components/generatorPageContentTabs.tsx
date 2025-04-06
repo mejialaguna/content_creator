@@ -63,10 +63,10 @@ export default function GeneratorPageContentTabs({
 
   const icons = useMemo(
     () => ({
-      FileText: <FileText className="h-5 w-5" />,
-      ShoppingBag: <ShoppingBag className="h-5 w-5" />,
-      MessageSquare: <MessageSquare className="h-5 w-5" />,
-      BarChart: <BarChart className="h-5 w-5" />,
+      FileText: <FileText className='h-5 w-5' />,
+      ShoppingBag: <ShoppingBag className='h-5 w-5' />,
+      MessageSquare: <MessageSquare className='h-5 w-5' />,
+      BarChart: <BarChart className='h-5 w-5' />,
     }),
     []
   );
@@ -183,30 +183,30 @@ export default function GeneratorPageContentTabs({
   );
 
   return (
-    <div className="space-y-8 px-2 md:px-0">
-      <div className="justify-items-center md:justify-items-start">
-        <h1 className="text-3xl font-bold tracking-tight">Content Generator</h1>
-        <p className="text-gray-500 dark:text-gray-400">
+    <div className='space-y-8 px-2 md:px-0'>
+      <div className='justify-items-center md:justify-items-start'>
+        <h1 className='text-3xl font-bold tracking-tight'>Content Generator</h1>
+        <p className='text-gray-500 dark:text-gray-400'>
           Generate high-quality content with AI.
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
+      <div className='grid gap-8 md:grid-cols-2'>
+        <div className='space-y-6'>
           <Tabs
-            defaultValue="blog-post"
+            defaultValue='blog-post'
             value={selectedType}
             onValueChange={onChange}
           >
-            <TabsList className="grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto]">
+            <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto]'>
               {Object.values(contentTypes).map((type) => (
                 <TabsTrigger
                   key={type.id}
                   value={type.id}
-                  className="flex items-center"
+                  className='flex items-center'
                 >
                   {icons[type.icon as keyof typeof icons]}
-                  <span className="ml-2 hidden sm:inline">{type.name}</span>
+                  <span className='ml-2 hidden sm:inline'>{type.name}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -214,22 +214,22 @@ export default function GeneratorPageContentTabs({
               {Object.values(contentTypes).map((type) => (
                 <TabsContent key={type.id} value={type.id}>
                   <Card>
-                    <CardContent className="pt-6">
-                      <div className="space-y-4">
+                    <CardContent className='pt-6'>
+                      <div className='space-y-4'>
                         <div>
-                          <h3 className="text-lg font-medium">{type.name}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <h3 className='text-lg font-medium'>{type.name}</h3>
+                          <p className='text-sm text-gray-500 dark:text-gray-400'>
                             {type.description}
                           </p>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="topic">
+                        <div className='space-y-2'>
+                          <Label htmlFor='topic'>
                             Topic or Subject{' '}
-                            <span className="text-sm text-red-500">*</span>
+                            <span className='text-sm text-red-500'>*</span>
                           </Label>
                           <Input
-                            id="topic"
+                            id='topic'
                             placeholder={`Enter the topic for your ${type.name.toLowerCase()}`}
                             value={
                               shouldShowSavedContent
@@ -242,11 +242,11 @@ export default function GeneratorPageContentTabs({
                           />
                         </div>
 
-                        <div className="flex flex-col md:flex-row justify-between gap-4">
-                          <div className="space-y-2 flex-1">
-                            <Label htmlFor="tone">
+                        <div className='flex flex-col md:flex-row justify-between gap-4'>
+                          <div className='space-y-2 flex-1'>
+                            <Label htmlFor='tone'>
                               Tone{' '}
-                              <span className="text-sm text-red-500">*</span>
+                              <span className='text-sm text-red-500'>*</span>
                             </Label>
                             <Select
                               value={
@@ -263,7 +263,7 @@ export default function GeneratorPageContentTabs({
                               }
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a tone" />
+                                <SelectValue placeholder='Select a tone' />
                               </SelectTrigger>
                               <SelectContent>
                                 {Object.entries(contentTones).map(
@@ -277,10 +277,10 @@ export default function GeneratorPageContentTabs({
                             </Select>
                           </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="model">
+                          <div className='space-y-2'>
+                            <Label htmlFor='model'>
                               Model{' '}
-                              <span className="text-sm text-red-500">*</span>
+                              <span className='text-sm text-red-500'>*</span>
                             </Label>
                             <Select
                               value={
@@ -297,7 +297,7 @@ export default function GeneratorPageContentTabs({
                               }
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a Model" />
+                                <SelectValue placeholder='Select a Model' />
                               </SelectTrigger>
                               <SelectContent>
                                 {['gpt-3.5-turbo', 'gpt-4'].map((name, id) => (
@@ -313,11 +313,11 @@ export default function GeneratorPageContentTabs({
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="keywords">Keywords (optional)</Label>
+                        <div className='space-y-2'>
+                          <Label htmlFor='keywords'>Keywords (optional)</Label>
                           <Input
-                            id="keywords"
-                            placeholder="Enter keywords separated by commas"
+                            id='keywords'
+                            placeholder='Enter keywords separated by commas'
                             value={
                               shouldShowSavedContent
                                 ? content?.content?.keywords?.length
@@ -329,24 +329,24 @@ export default function GeneratorPageContentTabs({
                               handleTabDataChange(e, selectedType, 'keywords')
                             }
                           />
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className='text-xs text-gray-500 dark:text-gray-400'>
                             Add keywords to include in your content, separated
                             by commas.
                           </p>
                         </div>
 
                         {error && (
-                          <p className="text-sm text-red-500">{error}</p>
+                          <p className='text-sm text-red-500'>{error}</p>
                         )}
 
                         <Button
-                          type="submit"
+                          type='submit'
                           disabled={isGenerating || isDisabled}
-                          className="w-full"
+                          className='w-full'
                         >
                           {isGenerating ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                               Generating Content
                             </>
                           ) : (
@@ -362,8 +362,8 @@ export default function GeneratorPageContentTabs({
           </Tabs>
         </div>
 
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold">Content Preview</h2>
+        <div className='space-y-4'>
+          <h2 className='text-xl font-bold'>Content Preview</h2>
           {tabData[selectedType]?.generatedContent || shouldShowSavedContent ? (
             <ContentEditor
               content={
@@ -383,12 +383,12 @@ export default function GeneratorPageContentTabs({
               isGenerating={isGenerating}
             />
           ) : (
-            <div className="flex h-[400px] items-center justify-center rounded-lg border border-dashed p-8 text-center">
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">
+            <div className='flex h-[400px] items-center justify-center rounded-lg border border-dashed p-8 text-center'>
+              <div className='space-y-2'>
+                <h3 className='text-lg font-medium'>
                   No content generated yet
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className='text-sm text-gray-500 dark:text-gray-400'>
                   Fill in the form and click &quot;Generate Content&quot; to
                   create your content.
                 </p>

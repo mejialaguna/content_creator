@@ -31,7 +31,7 @@ export function ContentEditor({
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('preview');
 
   return (
-    <div className="rounded-lg border bg-card">
+    <div className='rounded-lg border bg-card'>
       <DownloadableContent
         content={content}
         contentType={contentType}
@@ -41,28 +41,28 @@ export function ContentEditor({
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as 'edit' | 'preview')}
       >
-        <div className="border-b">
-          <TabsList className="w-full justify-start rounded-none border-b-0 py-0 px-5">
+        <div className='border-b'>
+          <TabsList className='w-full justify-start rounded-none border-b-0 py-0 px-5'>
             <TabsTrigger
-              value="preview"
-              className="rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary"
+              value='preview'
+              className='rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary'
             >
               Preview
             </TabsTrigger>
             <TabsTrigger
-              value="edit"
-              className="rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary"
+              value='edit'
+              className='rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary'
             >
               Edit
             </TabsTrigger>
           </TabsList>
         </div>
-        <TabsContent value="preview" className="p-4">
-          <div className="prose dark:prose-invert max-w-none h-[55vh] overflow-y-auto no-scrollbar thinking-dots">
+        <TabsContent value='preview' className='p-4'>
+          <div className='prose dark:prose-invert max-w-none h-[55vh] overflow-y-auto no-scrollbar thinking-dots'>
             {isGenerating && (
-              <div className="thinking-dots mb-6">
+              <div className='thinking-dots mb-6'>
                 Writting
-                <span className="ml-1" />
+                <span className='ml-1' />
                 <span />
                 <span />
               </div>
@@ -74,11 +74,11 @@ export function ContentEditor({
               )}
           </div>
         </TabsContent>
-        <TabsContent value="edit" className="p-4">
+        <TabsContent value='edit' className='p-4'>
           <Textarea
             value={content}
             onChange={(e) => onContentChange(e.target.value)}
-            className="min-h-[400px] resize-none font-mono"
+            className='min-h-[400px] resize-none font-mono'
           />
         </TabsContent>
       </Tabs>
