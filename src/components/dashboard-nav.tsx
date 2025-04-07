@@ -3,8 +3,9 @@
 import { Menu, User, Plus, Settings, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
+import { logOut } from '@/actions/user/logOut';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -44,6 +45,10 @@ export function DashboardNav() {
       active: pathname === '/dashboard/settings',
     },
   ];
+
+  const handleLogOut = useCallback(() => {
+    logOut();
+  }, []);
 
   return (
     <header className='w-full border-b bg-background'>
@@ -89,7 +94,7 @@ export function DashboardNav() {
                   Settings
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogOut}>
                 <LogOut className='mr-2 h-4 w-4' />
                 Logout
               </DropdownMenuItem>
@@ -119,7 +124,10 @@ export function DashboardNav() {
                   {route.label}
                 </Link>
               ))}
-              <Link href='/dashboard/generator/blog-post' onClick={() => setIsOpen(false)}>
+              <Link
+                href='/dashboard/generator/blog-post'
+                onClick={() => setIsOpen(false)}
+              >
                 <Button className='w-full'>
                   <Plus className='mr-2 h-4 w-4' />
                   New Content

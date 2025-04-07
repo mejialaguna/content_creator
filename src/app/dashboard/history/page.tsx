@@ -1,8 +1,16 @@
+import { redirect } from 'next/navigation';
+
 import { getUserGeneratedContent } from '@/actions/getUserGeneratedContent';
 import { HistoryList } from '@/components/historyList';
+import { auth } from '@/lib/auth-no-edge';
 
 export default async function HistoryPage() {
-  const { ok, userContent } = await getUserGeneratedContent('1');
+  const session = await auth();
+
+  if (!session?.user) redirect('/');
+
+  const userId = session.user.id;
+  const { ok, userContent } = await getUserGeneratedContent(userId as string);
 
   const contentHistory = [...userContent];
 

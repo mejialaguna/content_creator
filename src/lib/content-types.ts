@@ -1,23 +1,72 @@
+import { z } from 'zod';
+
 import type OpenAI from 'openai';
 
 /* eslint-disable max-len */
-export type ContentType = 'blog-post' | 'product-description' | 'social-media' | 'ad-copy'
+export type ContentType =
+  | 'blog-post'
+  | 'product-description'
+  | 'social-media'
+  | 'ad-copy';
 
-export type ContentTone = 'formal' | 'casual' | 'funny' | 'persuasive' | 'informative'
+export type ContentTone =
+  | 'formal'
+  | 'casual'
+  | 'funny'
+  | 'persuasive'
+  | 'informative';
 
 export type InputLabelType = 'topic' | 'tone' | 'model' | 'keywords';
 
+export const authSchema = z.object({
+  email: z.string().min(1, 'Required').email('Invalid Email').max(100),
+  password: z
+    .string()
+    .min(1, 'Required')
+    .min(6, 'Password must be at least 6 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character'
+    ),
+});
+
+export const signUpSchema = z
+  .object({
+    name: z.string().min(3, 'Required').max(100),
+    email: z.string().min(1, 'Required').email('Invalid Email').max(100),
+    password: z
+      .string()
+      .min(1, 'Required')
+      .min(6, 'Password must be at least 6 characters')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number')
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Password must contain at least one special character'
+      ),
+    confirmPassword: z.string().min(1, 'Required'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  });
+
+export type TAuthSignIn = z.infer<typeof authSchema>;
+export type TAuthSignUp = z.infer<typeof signUpSchema>;
+
 export interface ContentTypeConfig {
-  id: ContentType
-  name: string
-  description: string
-  icon: string
-  promptTemplate: string
-  defaultTone: ContentTone
-  maxLength: number
+  id: ContentType;
+  name: string;
+  description: string;
+  icon: string;
+  promptTemplate: string;
+  defaultTone: ContentTone;
+  maxLength: number;
 }
 
-export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4'
+export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4';
 export interface GenerateContentProps {
   contentType: ContentType;
   topic: string;
@@ -26,17 +75,19 @@ export interface GenerateContentProps {
   client: OpenAI;
 }
 
-export interface GeneratedContentData extends Omit<GenerateContentProps, 'client'> {
+export interface GeneratedContentData
+  extends Omit<GenerateContentProps, 'client'> {
   userId: string;
   generatedContent: string;
   model: OpenAIModel;
 }
 
-export interface TabDataType extends Omit<GenerateContentProps, 'client' | 'contentType'> {
+export interface TabDataType
+  extends Omit<GenerateContentProps, 'client' | 'contentType'> {
   model: OpenAIModel | '';
   generatedContent: string;
   error: string;
-};
+}
 
 export interface ResponseStatus {
   ok: boolean;
@@ -70,8 +121,8 @@ export interface UserGeneratedContent {
   createdAt: Date;
 }
 
-export interface UserGeneratedContentById extends ResponseStatus{
- content : { 
+export interface UserGeneratedContentById extends ResponseStatus {
+  content: {
     id: string;
     userId: string;
     contentType: string;
@@ -89,7 +140,7 @@ export interface UserGeneratedContentResponse extends ResponseStatus {
 }
 
 export interface UserStatsAndContentResponse extends ResponseStatus {
-  userStats: UserStats | Record<string, never>; 
+  userStats: UserStats | Record<string, never>;
   userContent: UserGeneratedContent[];
 }
 
@@ -136,7 +187,10 @@ export const contentTypes: Record<ContentType, ContentTypeConfig> = {
   },
 };
 
-export const contentTones: Record<ContentTone, { name: string; description: string }> = {
+export const contentTones: Record<
+  ContentTone,
+  { name: string; description: string }
+> = {
   formal: {
     name: 'Formal',
     description: 'Professional and business-like',
@@ -158,4 +212,3 @@ export const contentTones: Record<ContentTone, { name: string; description: stri
     description: 'Educational and factual',
   },
 };
-
