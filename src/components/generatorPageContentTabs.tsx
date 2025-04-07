@@ -39,12 +39,14 @@ interface GeneratorPageContentTabsProps {
   selectedTypeId: ContentType;
   content?: UserGeneratedContentById | undefined;
   contentId?: string;
+  userId?: string;
 }
 
 export default function GeneratorPageContentTabs({
   selectedTypeId,
   content,
   contentId,
+  userId,
 }: GeneratorPageContentTabsProps) {
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<ContentType>(selectedTypeId);
@@ -130,7 +132,7 @@ export default function GeneratorPageContentTabs({
               tabData[selectedType]?.keywords.length > 0 && {
                 keywords: tabData[selectedType]?.keywords,
               }),
-            id: '1',
+            id: userId,
           }),
         });
 
@@ -165,7 +167,7 @@ export default function GeneratorPageContentTabs({
         setIsGenerating(false);
       }
     },
-    [isDisabled, selectedType, tabData]
+    [isDisabled, selectedType, tabData, userId]
   );
 
   useEffect(() => {

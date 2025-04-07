@@ -9,8 +9,10 @@ export default async function HistoryPage() {
 
   if (!session?.user) redirect('/');
 
-  const userId = session.user.id;
-  const { ok, userContent } = await getUserGeneratedContent(userId as string);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const userId = session.user.id!;
+
+  const { ok, userContent } = await getUserGeneratedContent(userId);
 
   const contentHistory = [...userContent];
 
