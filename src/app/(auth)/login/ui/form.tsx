@@ -140,7 +140,14 @@ const SignUpButton = () => {
         w-[85%] bg-gradient-to-br from-orange-200 to-orange-500 hover:scale-105 transition-all flex justify-self-center'
       disabled={pending}
     >
-      Sign in
+      Sign in { pending && (
+             <div className='thinking-dots mb-6'>
+                Writting
+                <span className='ml-1' />
+                <span />
+                <span />
+              </div>
+            }
     </Button>
   );
 };
