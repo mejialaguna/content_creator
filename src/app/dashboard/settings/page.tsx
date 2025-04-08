@@ -3,6 +3,7 @@
 import { CreditCard, User, Bell, Shield } from 'lucide-react';
 import { useState } from 'react';
 
+import Securityform from '@/components/securityForm';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,11 +12,10 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Securityform from '@/components/securityForm';
 
 export default function SettingsPage() {
-  const [name, setName] = useState('John Doe');
-  const [email, setEmail] = useState('john.doe@example.com');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [marketingEmails, setMarketingEmails] = useState(false);
 
@@ -49,7 +49,7 @@ export default function SettingsPage() {
         <TabsContent value='account'>
           <Card>
             <CardHeader>
-              <CardTitle>Account Information</CardTitle>
+              <CardTitle>Account Information (READ ONLY FOR NOW)</CardTitle>
               <CardDescription>Update your account information and email address.</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
@@ -71,7 +71,7 @@ export default function SettingsPage() {
         <TabsContent value='billing'>
           <Card>
             <CardHeader>
-              <CardTitle>Subscription Plan</CardTitle>
+              <CardTitle>Subscription Plan (READ ONLY FOR NOW)</CardTitle>
               <CardDescription>Manage your subscription and billing information.</CardDescription>
             </CardHeader>
             <CardContent className='space-y-6'>
@@ -133,7 +133,7 @@ export default function SettingsPage() {
         <TabsContent value='notifications'>
           <Card>
             <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
+              <CardTitle>Notification Settings (READ ONLY FOR NOW)</CardTitle>
               <CardDescription>Manage how you receive notifications.</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
