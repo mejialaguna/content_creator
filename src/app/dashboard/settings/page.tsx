@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Securityform from '@/components/securityForm';
 
 export default function SettingsPage() {
   const [name, setName] = useState('John Doe');
@@ -163,29 +164,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value='security'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage your password and security preferences.</CardDescription>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='current-password'>Current Password</Label>
-                <Input id='current-password' type='password' />
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='new-password'>New Password</Label>
-                <Input id='new-password' type='password' />
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='confirm-password'>Confirm New Password</Label>
-                <Input id='confirm-password' type='password' />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Update Password</Button>
-            </CardFooter>
-          </Card>
+          <Securityform />
         </TabsContent>
       </Tabs>
     </div>

@@ -18,6 +18,17 @@ export type ContentTone =
 
 export type InputLabelType = 'topic' | 'tone' | 'model' | 'keywords';
 
+const passwordSchemaObject = z
+  .string()
+  .min(1, 'Required')
+  .min(6, 'Password must be at least 6 characters')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number')
+  .regex(
+    /[^A-Za-z0-9]/,
+    'Password must contain at least one special character'
+  );
+
 export const authSchema = z.object({
   email: z.string().min(1, 'Required').email('Invalid Email').max(100),
   password: z
@@ -53,8 +64,25 @@ export const signUpSchema = z
     message: 'Passwords do not match',
   });
 
+export const securitySchema = z
+  .object({
+    email: z.string().min(1, 'Required').email('Invalid Email').max(100),
+    password: passwordSchemaObject,
+    newPassword: passwordSchemaObject,
+    confirmPassword: passwordSchemaObject,
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  })
+  .refine((data) => data.password !== data.newPassword, {
+    path: ['newPassword'],
+    message: 'Passwords should be different than the previous one.',
+  });
+
 export type TAuthSignIn = z.infer<typeof authSchema>;
 export type TAuthSignUp = z.infer<typeof signUpSchema>;
+export type TAuthSecurity = z.infer<typeof securitySchema>;
 
 export interface ContentTypeConfig {
   id: ContentType;
