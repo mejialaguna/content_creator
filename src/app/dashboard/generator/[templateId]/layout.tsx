@@ -1,5 +1,4 @@
-export const revalidate = 604800; // revalidate every 7days
-
+export const revalidate = 5;
 
 import { redirect } from 'next/navigation';
 
