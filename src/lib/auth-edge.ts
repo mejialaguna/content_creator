@@ -13,7 +13,7 @@ export const nextAuthEdgeConfig = {
       const loginPage = request.nextUrl.pathname.includes('/login');
       const signupPage = request.nextUrl.pathname.includes('/signup');
 
-      if (isLoggedIn && (loginPage || signupPage)) {
+      if (isLoggedIn && !isTryingToAccessApp) {
         return Response.redirect(new URL('/dashboard', request.nextUrl));
       }
 
