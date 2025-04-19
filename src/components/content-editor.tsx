@@ -2,8 +2,9 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { updateGeneratedContent } from '@/actions/updateGeneratedContent';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +18,7 @@ interface ContentEditorProps {
   onContentChange: (content: string) => void;
   contentType: ContentType;
   isGenerating?: boolean;
+  contentId?: string;
 }
 
 export function ContentEditor({
@@ -24,11 +26,14 @@ export function ContentEditor({
   onContentChange,
   contentType,
   isGenerating,
+  contentId,
 }: ContentEditorProps) {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('preview');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const contentRef =useRef<string | null>(content);
   const prevGeneratingState = useRef<boolean | undefined>(isGenerating);
+  const shouldSave = useMemo(() => contentRef?.current?.trim() !== content.trim(), [content]);
 
   // Auto-scroll as content is generated
   useEffect(() => {
@@ -71,7 +76,7 @@ export function ContentEditor({
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as 'edit' | 'preview')}
       >
-        <div className='border-b'>
+        <div className='border-b flex justify-between'>
           <TabsList className='w-full flex justify-start rounded-none border-b-0 py-0 pl-5'>
             <TabsTrigger
               value='preview'
@@ -86,14 +91,18 @@ export function ContentEditor({
               Edit
             </TabsTrigger>
           </TabsList>
-            <Button
-              variant='ghost'
-              // type='submit'
-              // disabled={isGenerating || isDisabled}
-              className=' bg-neutral-100 pr-5 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400 rounded-none'
+          {activeTab === 'edit' && contentId && (
+            <div className={!shouldSave ? 'cursor-not-allowed' : ''}>
+              <Button
+                variant='ghost'
+                onClick={() => updateGeneratedContent(contentId, content)}
+                disabled={!shouldSave}
+                className='bg-neutral-100 pr-5 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400 rounded-none'
             >
               Save
             </Button>
+            </div>
+          )}
         </div>
         <TabsContent value='preview' className='p-4'>
           <div

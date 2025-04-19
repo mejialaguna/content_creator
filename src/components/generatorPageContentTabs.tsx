@@ -386,6 +386,7 @@ export default function GeneratorPageContentTabs({
               }
               contentType={selectedType}
               isGenerating={isGenerating}
+              contentId={contentId}
             />
           ) : (
             <div className='flex h-[400px] items-center justify-center rounded-lg border border-dashed p-8 text-center'>

@@ -89,4 +89,5 @@ model ContentData {
 
   // This index improves performance when searching or filtering by userId — for example, when finding all contents created by a particular user.
   @@index([userId])
+  @@unique([id, userId], name: "id_userId")
 }
