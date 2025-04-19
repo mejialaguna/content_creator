@@ -197,10 +197,10 @@ const SignUpButton = () => {
       type='submit'
       variant={'secondary'}
       className='text-sm text-white font-extrabold hover:text-stone-100
-        w-full bg-gradient-to-br from-orange-200 to-orange-500 hover:scale-105 transition-all flex justify-self-center'
+        w-full bg-gradient-to-br from-orange-200 to-orange-500 transition-all flex justify-self-center'
       disabled={pending}
     >
-      Sign in
+      Change Password
     </Button>
   );
 };
