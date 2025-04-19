@@ -51,6 +51,7 @@ export default function GeneratorPageContentTabs({
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<ContentType>(selectedTypeId);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDoneGenerating, setIsDoneGenerating] = useState<boolean>();
   const [error, setError] = useState('');
   const [tabData, setTabData] = useState<
     Partial<Record<ContentType, TabDataType>>
@@ -59,8 +60,9 @@ export default function GeneratorPageContentTabs({
     () =>
       !tabData[selectedType]?.topic ||
       !tabData[selectedType]?.tone ||
-      !tabData[selectedType]?.model,
-    [selectedType, tabData]
+      !tabData[selectedType]?.model ||
+      isDoneGenerating,
+    [isDoneGenerating, selectedType, tabData]
   );
 
   const icons = useMemo(
@@ -159,6 +161,7 @@ export default function GeneratorPageContentTabs({
             },
           })); // updates live
         }
+        setIsDoneGenerating(true);
       } catch (err) {
         setError('Failed to generate content. Please try again.');
         // eslint-disable-next-line no-console
@@ -200,15 +203,15 @@ export default function GeneratorPageContentTabs({
             value={selectedType}
             onValueChange={onChange}
           >
-            <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto] lg:flex'>
+            <TabsList className='grid grid-cols-4 md:grid-cols-[auto_auto_auto_auto] h-auto md:justify-evenly'>
               {Object.values(contentTypes).map((type) => (
                 <TabsTrigger
                   key={type.id}
                   value={type.id}
-                  className='flex items-center'
+                  className='flex lg:flex-col xl:flex-row items-center px-2'
                 >
                   {icons[type.icon as keyof typeof icons]}
-                  <span className='ml-2 hidden sm:inline'>{type.name}</span>
+                  <span className='xl:ml-2 hidden sm:inline'>{type.name}</span>
                 </TabsTrigger>
               ))}
             </TabsList>

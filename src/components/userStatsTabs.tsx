@@ -46,10 +46,7 @@ export const UserStatsTabs = ({
     return content.trim().split(/\s+/).filter(Boolean).length;
   };
 
-  const recentContent = userContent.filter((item) => {
-    const createdAtDate = new Date(item.createdAt);
-    return createdAtDate >= new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-  });
+  const recentContent = userContent.filter((_, idx) => idx < 4);
 
   return (
     <Tabs defaultValue='recent' className='space-y-4'>

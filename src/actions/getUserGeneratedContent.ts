@@ -59,18 +59,33 @@ export async function getUserStats(userId: string): Promise<UserStatsResponse> {
 }
 
 export async function getUserGeneratedContent(
-  userId: string
+  userId: string,
+  shouldUsePagination?: boolean,
+  page?: number,
+  take?: number
 ): Promise<UserGeneratedContentResponse> {
   if (!userId || typeof userId !== 'string') {
     return {
       ok: false,
       message: 'Invalid user ID',
       userContent: [],
+      contentCount: 0,
     };
   }
 
   try {
+    const contentCount = await prisma.contentData.count({
+      where: { userId },
+    });
+
+    const shouldAddPagination = shouldUsePagination && !!page && !!take;
+
     const userContent = await prisma.contentData.findMany({
+      ...(shouldAddPagination && {
+        skip: (page - 1) * take,
+        // eslint-disable-next-line object-shorthand
+        take: take,
+      }),
       where: {
         userId,
       },
@@ -84,6 +99,7 @@ export async function getUserGeneratedContent(
         ok: false,
         message: 'No user content found',
         userContent: [],
+        contentCount: 0,
       };
     }
 
@@ -93,12 +109,17 @@ export async function getUserGeneratedContent(
         ...itmes,
         contentType: ContentTypeMap[itmes.contentType],
       })),
+      ...(shouldAddPagination && {
+        contentCount,
+        totalPages: Math.ceil(contentCount / take),
+      }),
     };
   } catch (error) {
     return {
       ok: false,
       message: `Failed to retrieve user content: ${error instanceof Error ? error.message : 'Unknown error'}`,
       userContent: [],
+      contentCount: 0,
     };
   }
 }

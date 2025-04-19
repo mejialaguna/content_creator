@@ -5,7 +5,7 @@ import {
   MessageSquare,
   ShoppingBag,
   BarChart,
-  Search,
+  Search
 } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
@@ -24,22 +24,21 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 import { useDebounce } from '@/hooks/useDebounce';
 
 import { DownloadableContent } from './downloadableContent';
+import { Pagination } from './pagination';
 
-import type {
-  ContentType,
-  UserGeneratedContent,
-} from '@/lib/content-types';
+import type { ContentType, UserGeneratedContent } from '@/lib/content-types';
 
 interface HistoryListProps {
   contentHistory: UserGeneratedContent[];
   ok: boolean;
+  contentCount: number | undefined;
+  totalPages: number | undefined;
 }
 
 const typeIcons = {
@@ -56,11 +55,16 @@ const typeNames = {
   'ad-copy': 'Ad Copy',
 };
 
-export function HistoryList({ contentHistory, ok }: HistoryListProps) {
+export function HistoryList({
+  contentHistory,
+  ok,
+  contentCount,
+  totalPages,
+}: HistoryListProps) {
   const [selectedFilterValue, setSelectedFilterValue] = useState<
     ContentType | undefined
   >(undefined);
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState<string>('');
   const wordCount = useCallback((text: string) => {
     if (!text) return 0;
     const words = text.trim().split(/\s+/);
@@ -84,6 +88,11 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
     });
   }, [selectedFilterValue, contentHistory, debouncedSearch]);
 
+  const handleResetFilters = useCallback(() => {
+    setSelectedFilterValue(undefined);
+    setTopic('');
+  }, []);
+
   return (
     <>
       <div className='flex items-center gap-4'>
@@ -97,6 +106,15 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
             onChange={(e) => setTopic(e.target.value)}
           />
         </div>
+        <div className='flex items-center gap-4 '>
+          <Button
+            variant='outline'
+            className='bg-blue-500 text-white hover:text-blue-300 transition-all'
+            onClick={() => handleResetFilters()}
+          >
+            Reset Filters
+          </Button>
+        </div>
         <Select
           onValueChange={(value: ContentType) => setSelectedFilterValue(value)}
         >
@@ -105,7 +123,6 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>Content Type</SelectLabel>
               {Object.entries(typeNames).map(([key, value]) => (
                 <SelectItem key={key} value={key}>
                   {value}
@@ -116,9 +133,9 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
         </Select>
       </div>
       {!ok ? (
-        <div className='justify-self-center mt-11'>
-          Theres is not content saved yet.
-        </div>
+        <p className='mt-11 text-center text-gray-500'>
+          There’s no content saved yet. Try generating something!
+        </p>
       ) : (
         <>
           <div className='space-y-4'>
@@ -160,17 +177,7 @@ export function HistoryList({ contentHistory, ok }: HistoryListProps) {
             ))}
           </div>
 
-          <div className='flex items-center justify-between'>
-            <Button variant='outline' disabled>
-              Previous
-            </Button>
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
-              Page 1 of 1
-            </div>
-            <Button variant='outline' disabled>
-              Next
-            </Button>
-          </div>
+          <Pagination contentCount={contentCount} totalPages={totalPages} />
         </>
       )}
     </>

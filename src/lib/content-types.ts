@@ -165,6 +165,8 @@ export interface UserGeneratedContentById extends ResponseStatus {
 
 export interface UserGeneratedContentResponse extends ResponseStatus {
   userContent: UserGeneratedContent[];
+  contentCount?: number;
+  totalPages?: number;
 }
 
 export interface UserStatsAndContentResponse extends ResponseStatus {

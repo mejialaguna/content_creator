@@ -2,14 +2,11 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { Copy, FileText, FileCode, FileOutput } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { handleContentExport } from '@/helpers/handleContentExport';
-import { handleCopy } from '@/helpers/handleCopy';
 
 import { DownloadableContent } from './downloadableContent';
 
@@ -29,6 +26,39 @@ export function ContentEditor({
   isGenerating,
 }: ContentEditorProps) {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('preview');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const prevGeneratingState = useRef<boolean | undefined>(isGenerating);
+
+  // Auto-scroll as content is generated
+  useEffect(() => {
+    if (isGenerating) {
+      // For textarea in edit mode
+      if (textareaRef.current && activeTab === 'edit') {
+        textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+      }
+
+      // For preview div
+      if (previewRef.current && activeTab === 'preview') {
+        previewRef.current.scrollTop = previewRef.current.scrollHeight;
+      }
+    }
+
+    if (prevGeneratingState.current && !isGenerating) {
+      // For textarea in edit mode
+      if (textareaRef.current && activeTab === 'edit') {
+        textareaRef.current.scrollTop = 0;
+      }
+
+      // For preview div
+      if (previewRef.current && activeTab === 'preview') {
+        previewRef.current.scrollTop = 0;
+      }
+    }
+
+    // Update the previous state for next comparison
+    prevGeneratingState.current = isGenerating;
+  }, [content, isGenerating, activeTab]);
 
   return (
     <div className='rounded-lg border bg-card'>
@@ -42,7 +72,7 @@ export function ContentEditor({
         onValueChange={(value) => setActiveTab(value as 'edit' | 'preview')}
       >
         <div className='border-b'>
-          <TabsList className='w-full justify-start rounded-none border-b-0 py-0 px-5'>
+          <TabsList className='w-full flex justify-start rounded-none border-b-0 py-0 pl-5'>
             <TabsTrigger
               value='preview'
               className='rounded-3xl border-b-2 border-transparent data-[state=active]:border-primary'
@@ -56,9 +86,20 @@ export function ContentEditor({
               Edit
             </TabsTrigger>
           </TabsList>
+            <Button
+              variant='ghost'
+              // type='submit'
+              // disabled={isGenerating || isDisabled}
+              className=' bg-neutral-100 pr-5 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400 rounded-none'
+            >
+              Save
+            </Button>
         </div>
         <TabsContent value='preview' className='p-4'>
-          <div className='prose dark:prose-invert max-w-none h-[55vh] overflow-y-auto no-scrollbar thinking-dots'>
+          <div
+            ref={previewRef}
+            className='prose dark:prose-invert max-w-none h-[55vh] overflow-y-auto no-scrollbar thinking-dots'
+          >
             {isGenerating && (
               <div className='thinking-dots mb-6'>
                 Writting
@@ -76,9 +117,10 @@ export function ContentEditor({
         </TabsContent>
         <TabsContent value='edit' className='p-4'>
           <Textarea
+            ref={textareaRef}
             value={content}
             onChange={(e) => onContentChange(e.target.value)}
-            className='min-h-[400px] resize-none font-mono'
+            className='min-h-[400px] resize-none font-mono overflow-auto'
           />
         </TabsContent>
       </Tabs>

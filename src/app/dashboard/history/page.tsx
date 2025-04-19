@@ -4,7 +4,15 @@ import { getUserGeneratedContent } from '@/actions/getUserGeneratedContent';
 import { HistoryList } from '@/components/historyList';
 import { auth } from '@/lib/auth-no-edge';
 
-export default async function HistoryPage() {
+interface HistoryPageProps {
+  searchParams: {
+    page?: string;
+  };
+}
+
+export default async function HistoryPage({searchParams}:HistoryPageProps) {
+  const page = searchParams.page ? parseInt(searchParams.page) : 1;
+  const take = 5;
   const session = await auth();
 
   if (!session?.user) redirect('/');
@@ -12,7 +20,7 @@ export default async function HistoryPage() {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const userId = session.user.id!;
 
-  const { ok, userContent } = await getUserGeneratedContent(userId);
+  const { ok, userContent, contentCount, totalPages } = await getUserGeneratedContent(userId, true, page, take);
 
   const contentHistory = [...userContent];
 
@@ -25,7 +33,7 @@ export default async function HistoryPage() {
         </p>
       </div>
 
-      <HistoryList contentHistory={contentHistory} ok={ok}/>
+      <HistoryList contentHistory={contentHistory} ok={ok} contentCount={contentCount} totalPages={totalPages}/>
     </div>
   );
 }
