@@ -140,8 +140,8 @@ const SignUpButton = () => {
       disabled={pending}
     >
       {pending ? (
-        <div className='thinking-dots mb-6'>
-          Checking your credentials.
+        <div className='thinking-dots'>
+          Checking your credentials
           <span className='ml-1' />
           <span />
           <span />
