@@ -61,13 +61,13 @@ export default function Form() {
 
   return (
     <form action={dispatch}>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      <CardContent className='space-y-4'>
+        <div className='space-y-2'>
+          <Label htmlFor='email'>Email</Label>
           <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
+            id='email'
+            type='email'
+            placeholder='m@example.com'
             {...register('email', {
               onChange: () => {
                 clearErrors('email');
@@ -76,19 +76,19 @@ export default function Form() {
             })}
           />
           {errors.email && (
-            <p className="text-red-500 text-xs">{errors.email.message}</p>
+            <p className='text-red-500 text-xs'>{errors.email.message}</p>
           )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <div className="flex relative">
+        <div className='space-y-2'>
+          <Label htmlFor='password'>Password</Label>
+          <div className='flex relative'>
             <Icon
-              className="absolute right-5 top-2 cursor-pointer h-5"
+              className='absolute right-5 top-2 cursor-pointer h-5'
               onClick={() => setIsPasswordVisible((prev) => !prev)}
             />
 
             <Input
-              id="password"
+              id='password'
               type={isPasswordVisible ? 'text' : 'password'}
               {...register('password', {
                 onChange: () => {
@@ -99,7 +99,7 @@ export default function Form() {
             />
           </div>
           {errors.password && (
-            <p className="text-red-500 text-xs">{errors.password.message}</p>
+            <p className='text-red-500 text-xs'>{errors.password.message}</p>
           )}
         </div>
         {/* <div className='flex items-center justify-between'>
@@ -119,7 +119,7 @@ export default function Form() {
           </div> */}
         {errorMessage && (
           <div>
-            <small className="text-red-600">{errorMessage}</small>
+            <small className='text-red-600'>{errorMessage}</small>
           </div>
         )}
       </CardContent>
@@ -133,21 +133,20 @@ const SignUpButton = () => {
 
   return (
     <Button
-      type="submit"
+      type='submit'
       variant={'secondary'}
-      className="text-sm text-white font-extrabold hover:text-stone-100
-        w-[85%] bg-gradient-to-br from-orange-200 to-orange-500 hover:scale-105 transition-all flex justify-self-center"
+      className='text-sm text-white font-extrabold hover:text-stone-100
+        w-[85%] bg-gradient-to-br from-orange-200 to-orange-500 hover:scale-105 transition-all flex justify-self-center'
       disabled={pending}
     >
-      Sign in
-      {pending && (
-        <div className="thinking-dots mb-6">
-          Writting
-          <span className="ml-1" />
+      {pending ? (
+        <div className='thinking-dots mb-6'>
+          Checking your credentials.
+          <span className='ml-1' />
           <span />
           <span />
         </div>
-      )}
+      ) : 'Sign in'}
     </Button>
   );
 };
