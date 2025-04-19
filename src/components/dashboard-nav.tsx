@@ -2,8 +2,8 @@
 
 import { Menu, User, Plus, Settings, LogOut } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 import { logOut } from '@/actions/user/logOut';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export function DashboardNav() {
+  const router = useRouter();
   const pathname = usePathname();
   const segments = pathname.split('/').filter(Boolean);
   const templateId = segments[segments.length - 1];
@@ -49,6 +50,12 @@ export function DashboardNav() {
   const handleLogOut = useCallback(() => {
     logOut();
   }, []);
+
+  useEffect(() => {
+    if (pathname === '/dashboard') {
+      router.refresh();
+    }
+  }, [pathname, router]);
 
   return (
     <header className='w-full border-b bg-background'>

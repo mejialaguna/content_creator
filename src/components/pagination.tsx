@@ -84,7 +84,7 @@ export function Pagination({ contentCount, totalPages }: PaginationProps) {
           <span className="font-medium">{contentCount}</span> results
         </p>
       </div>
-      <div>
+      <div className={`${totalPages && totalPages > 1 ? 'flex' : 'hidden'}`}>
         <nav
           className="isolate inline-flex -space-x-px rounded-md shadow-sm"
           aria-label="Pagination"
