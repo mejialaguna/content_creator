@@ -5,11 +5,17 @@ import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import { Pricing } from '@/components/pricing';
 import { Button } from '@/components/ui/button';
+import { auth } from '@/lib/auth-no-edge';
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const userId = session?.user?.id;
+
   return (
     <div className='flex min-h-screen flex-col dimelo'>
-      <Navbar />
+      <Navbar userId={userId} />
       <main className='flex-1'>
         <section className='w-full py-12 md:py-24 lg:py-32 xl:py-48 justify-items-center'>
           <div className='container px-4 md:px-6'>

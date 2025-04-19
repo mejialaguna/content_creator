@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-export function Navbar() {
+export function Navbar({userId}: {userId: string}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -23,9 +23,11 @@ export function Navbar() {
           <Link href='/#pricing' className='text-sm font-medium hover:underline underline-offset-4'>
             Pricing
           </Link>
-          <Link href='/dashboard' className='text-sm font-medium hover:underline underline-offset-4'>
-            Dashboard
-          </Link>
+          {userId && (
+            <Link href='/dashboard' className='text-sm font-medium hover:underline underline-offset-4'>
+              Dashboard
+            </Link>
+          )}
         </nav>
         <div className='ml-auto flex gap-2 md:ml-4'>
           <Link href='/login'>
