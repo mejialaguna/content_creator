@@ -115,7 +115,7 @@ export const UserStatsTabs = ({
                 </CardTitle>
                 <CardDescription>{template.description}</CardDescription>
               </CardHeader>
-              <CardFooter>
+              <CardFooter className='flex justify-between mx-0 mt-auto mb-0'>
                 <Link
                   href={template.href}
                   className='flex bg-black w-full text-white justify-center items-center rounded py-1.5'
