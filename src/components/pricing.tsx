@@ -34,7 +34,7 @@ export function Pricing() {
         'Priority support',
       ],
       cta: 'Upgrade to Pro',
-      href: '/signup?plan=pro',
+      href: '/signup',
       popular: true,
     },
     {
@@ -53,7 +53,7 @@ export function Pricing() {
         'Team collaboration',
       ],
       cta: 'Contact Sales',
-      href: '/contact',
+      href: '/signup',
       popular: false,
     },
   ];

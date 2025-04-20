@@ -5,7 +5,8 @@ import {
   MessageSquare,
   ShoppingBag,
   BarChart,
-  Search
+  Search,
+  ListRestart
 } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
@@ -62,8 +63,8 @@ export function HistoryList({
   totalPages,
 }: HistoryListProps) {
   const [selectedFilterValue, setSelectedFilterValue] = useState<
-    ContentType | undefined
-  >(undefined);
+    ContentType | string
+  >('');
   const [topic, setTopic] = useState<string>('');
   const wordCount = useCallback((text: string) => {
     if (!text) return 0;
@@ -89,14 +90,14 @@ export function HistoryList({
   }, [selectedFilterValue, contentHistory, debouncedSearch]);
 
   const handleResetFilters = useCallback(() => {
-    setSelectedFilterValue(undefined);
+    setSelectedFilterValue('');
     setTopic('');
   }, []);
 
   return (
     <>
-      <div className='flex items-center gap-4'>
-        <div className='relative flex-1'>
+      <div className='flex items-center gap-4 flex-col sm:flex-row !mt-4 sm:!mt-8'>
+        <div className='relative flex-1 w-full'>
           <Search className='absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400' />
           <Input
             type='search'
@@ -106,31 +107,47 @@ export function HistoryList({
             onChange={(e) => setTopic(e.target.value)}
           />
         </div>
-        <div className='flex items-center gap-4 '>
-          <Button
-            variant='outline'
-            className='bg-blue-500 text-white hover:text-blue-300 transition-all'
-            onClick={() => handleResetFilters()}
+        <div className='flex justify-between w-full sm:w-auto'>
+          {(topic !== '' || selectedFilterValue !== '')&& (
+            <div className='items-center gap-4 hidden sm:flex'>
+              <Button
+                variant='outline'
+                className='bg-blue-500 text-white hover:text-blue-300 transition-all mr-2'
+                onClick={() => handleResetFilters()}
+              >
+                Reset Filters
+              </Button>
+            </div>
+          )}
+          <Select
+          value={selectedFilterValue}
+            onValueChange={(value: ContentType) => setSelectedFilterValue(value)}
           >
-            Reset Filters
-          </Button>
+            <SelectTrigger className='w-full sm:w-[180px]'>
+              <SelectValue placeholder='Select Content type' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {Object.entries(typeNames).map(([key, value]) => (
+                  <SelectItem key={key} value={key}>
+                    {value}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {(topic !== '' || selectedFilterValue !== '') && (
+            <div className='items-center gap-4 flex sm:hidden ml-2'>
+              <Button
+                variant='outline'
+                className='bg-blue-500 text-white hover:text-blue-300 transition-all'
+                onClick={() => handleResetFilters()}
+              >
+                <ListRestart />
+              </Button>
+            </div>
+          )}
         </div>
-        <Select
-          onValueChange={(value: ContentType) => setSelectedFilterValue(value)}
-        >
-          <SelectTrigger className='w-[180px]'>
-            <SelectValue placeholder='Select Content type' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {Object.entries(typeNames).map(([key, value]) => (
-                <SelectItem key={key} value={key}>
-                  {value}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
       {!ok ? (
         <p className='mt-11 text-center text-gray-500'>

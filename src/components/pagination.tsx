@@ -111,7 +111,7 @@ export function Pagination({ contentCount, totalPages }: PaginationProps) {
                 bg-gray-50 text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50
                 focus:z-20 focus:outline-offset-0 hover:bg-transparent transition-all duration-300 cursor-pointer ${
                   page === currentPage &&
-                  'bg-blue-700 hover:bg-blue-500 text-white'
+                  'bg-blue-600 hover:bg-blue-400 text-white'
                 }`}
               >
                 {page}
