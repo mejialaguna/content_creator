@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-export function Navbar({userId}: {userId: string}) {
+export function Navbar({userId}: {userId: string | undefined}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
